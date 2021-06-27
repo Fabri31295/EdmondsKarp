@@ -33,3 +33,23 @@ private const val delimiter = " "
         
     }
 
+fun main2 (args: Array<String>){
+    val quantities = readLine()?.split(" ")
+    val sourceAndSinkNodes = readLine()?.split(" ")
+    var nodes = 0
+    var edges = 0
+    if(quantities != null){
+        nodes = quantities[0].toInt()
+        edges = quantities[1].toInt()
+    }
+    val edgeList: MutableList<String> = mutableListOf()
+    for(i in 1..edges){
+        readLine()?.let { edgeList.add(it) }
+    }
+    println(sourceAndSinkNodes?.let { maxFlux(edgeList, it) })
+}
+
+fun maxFlux(input: List<String>,sourceAndSinkNodes: List<String>): Int {
+    return 0
+}
+
