@@ -23,14 +23,21 @@ private const val DELIMITER = " "
         }
     }
 
+    private fun edmondsKarp(s: Int, t: Int, edgeList: MutableList<String>) : Int {
+        var flujoMaximo = 0
+
+
+        return flujoMaximo
+    }
+
     private fun getList(str: String): List<String> {
         val list = str.split(DELIMITER)
         return list
     }
 
-    private fun bfs(s: Int, t: Int) {
+    private fun bfs(s: Int, t: Int, edgeList: MutableList<String>) {
         var queue: Queue<Int>
-        
+
     }
 
 
