@@ -5,21 +5,21 @@ private var cantidadNodos = 0
 fun main(args: Array<String>) {
 
         val cantidadArcos: Int
-        val nodoSource: Int
-        val nodoSink: Int
+        val origen: Int
+        val destino: Int
         var line : String
         val sc = Scanner(System.`in`)
         line = sc.nextLine()
         cantidadNodos = line.split(DELIMITER)[0].toInt()
         cantidadArcos = line.split(DELIMITER)[1].toInt()
         line = sc.nextLine()
-        nodoSource = line.split(DELIMITER)[0].toInt()
-        nodoSink = line.split(DELIMITER)[1].toInt()
+        origen = line.split(DELIMITER)[0].toInt()
+        destino = line.split(DELIMITER)[1].toInt()
         val listaDeArcos: MutableList<String> = mutableListOf()
         for(i in 1..cantidadArcos){
             sc.nextLine()?.let { listaDeArcos.add(it) }
         }
-        println("${edmondsKarp(formarGrafoMatriz(listaDeArcos, cantidadNodos),nodoSource-1,nodoSink-1)}")
+        println("${edmondsKarp(formarGrafoMatriz(listaDeArcos, cantidadNodos),origen-1,destino-1)}")
     }
 
     private fun formarGrafoMatriz(listaDeArcos : MutableList<String>,cantidadNodos: Int) : Array<IntArray>{
@@ -47,82 +47,63 @@ fun edmondsKarp(graph: Array<IntArray>, s: Int, t: Int): Int {
     var u: Int
     var v: Int
 
-    val rGraph = Array(cantidadNodos) { IntArray(cantidadNodos) }
+    val grafoResidual = Array(cantidadNodos) { IntArray(cantidadNodos) }
     u = 0
     while (u < cantidadNodos) {
         v = 0
         while (v < cantidadNodos) {
-            rGraph[u][v] = graph[u][v]
+            grafoResidual[u][v] = graph[u][v]
             v++
         }
         u++
     }
 
-    // This array is filled by BFS and to store path
-    val parent = IntArray(cantidadNodos)
-    var maxFlow = 0 // There is no flow initially
+    val camino = IntArray(cantidadNodos)
+    var maxFlow = 0
 
-    // Augment the flow while tere is path from source
-    // to sink
-    while (bfs(rGraph, s, t, parent)) {
-        // Find minimum residual capacity of the edhes
-        // along the path filled by BFS. Or we can say
-        // find the maximum flow through the path found.
-        var pathFlow = Int.MAX_VALUE
+    while (bfs(grafoResidual, s, t, camino)) {
+        var caminoDeFlujo = Int.MAX_VALUE
         v = t
         while (v != s) {
-            u = parent[v]
-            pathFlow = pathFlow.coerceAtMost(rGraph[u][v])
-            v = parent[v]
+            u = camino[v]
+            caminoDeFlujo = caminoDeFlujo.coerceAtMost(grafoResidual[u][v])
+            v = camino[v]
         }
 
-        // update residual capacities of the edges and
-        // reverse edges along the path
         v = t
         while (v != s) {
-            u = parent[v]
-            rGraph[u][v] -= pathFlow
-            rGraph[v][u] += pathFlow
-            v = parent[v]
+            u = camino[v]
+            grafoResidual[u][v] -= caminoDeFlujo
+            grafoResidual[v][u] += caminoDeFlujo
+            v = camino[v]
         }
 
-        // Add path flow to overall flow
-        maxFlow += pathFlow
+        maxFlow += caminoDeFlujo
     }
 
-    // Return the overall flow
     return maxFlow
 }
 
-fun bfs(rGraph: Array<IntArray>, s: Int, t: Int, parent: IntArray): Boolean {
-    // Create a visited array and mark all vertices as
-    // not visited
-    val visited = BooleanArray(cantidadNodos)
-    for (i in 0 until cantidadNodos) visited[i] = false
+fun bfs(grafoResidual: Array<IntArray>, s: Int, t: Int, camino: IntArray): Boolean {
+    val visitado = BooleanArray(cantidadNodos)
+    for (i in 0 until cantidadNodos) visitado[i] = false
 
-    // Create a queue, enqueue source vertex and mark
-    // source vertex as visited
-    val queue = LinkedList<Int>()
-    queue.add(s)
-    visited[s] = true
-    parent[s] = -1
+    val cola = LinkedList<Int>()
+    cola.add(s)
+    visitado[s] = true
+    camino[s] = -1
 
-    // Standard BFS Loop
-    while (queue.size != 0) {
-        val u = queue.poll()
+    while (cola.size != 0) {
+        val u = cola.poll()
         for (v in 0 until cantidadNodos) {
-            if (!visited[v] && rGraph[u][v] > 0) {
-                // If we find a connection to the sink
-                // node, then there is no point in BFS
-                // anymore We just have to set its parent
-                // and can return true
+            if (!visitado[v] && grafoResidual[u][v] > 0) {
                 if (v == t) {
-                    parent[v] = u
+                    camino[v] = u
                     return true
                 }
-                queue.add(v)
-                parent[v] = u
-                visited[v] = true
+                cola.add(v)
+                camino[v] = u
+                visitado[v] = true
             }
         }
     }
