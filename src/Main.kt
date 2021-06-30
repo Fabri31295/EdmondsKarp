@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
         return grafo
     }
 
-fun edmondsKarp(graph: Array<IntArray>, s: Int, t: Int): Int {
+private fun edmondsKarp(graph: Array<IntArray>, s: Int, t: Int): Int {
     var u: Int
     var v: Int
 
@@ -84,7 +84,7 @@ fun edmondsKarp(graph: Array<IntArray>, s: Int, t: Int): Int {
     return maxFlow
 }
 
-fun bfs(grafoResidual: Array<IntArray>, s: Int, t: Int, camino: IntArray): Boolean {
+private fun bfs(grafoResidual: Array<IntArray>, s: Int, t: Int, camino: IntArray): Boolean {
     val visitado = BooleanArray(cantidadNodos)
     for (i in 0 until cantidadNodos) visitado[i] = false
 
